@@ -11,9 +11,9 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 
-data = json.loads(open('test_set.json').read())
+data = json.loads(open('test_set.json').read()) #training_set.json
 sentences = []
-new_tweet = open("test.csv", "w")
+new_tweet = open("test.csv", "w") #train.csv
 cashtag = ["$"+chr(asci) for asci in range(97, 123)]
 stop_words = set(stopwords.words('english'))
 for item in data:
@@ -31,13 +31,11 @@ for item in data:
     sentences.append(filtered_sentence)
     new_tweet.write(' '.join(filtered_sentence)+'\t'+item["target"]+'\t'+str(item["sentiment"])+"\n")
 
-#print (sentences[1])
-
+'''
 model = Word2Vec(sentences, size=10, min_count=1, workers=4)
 model.save("word2vec_model")
 model.wv.save_word2vec_format("vectors", binary=False)
-#print (model.wv['price'])
-
+'''
 
 
 
