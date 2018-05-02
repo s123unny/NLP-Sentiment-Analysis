@@ -71,7 +71,7 @@ def  train_predict(labels_train, msgs_train, labels_test, msgs_test, cashtags_tr
     #f1_mi = f1_score(Y_test, y_hat, average='micro')
     print 'MSE: ', mse
     #print 'f1 macro: ', f1_ma, '\tf1 micro: ', f1_mi
-    return mae, cos
+    return mse
 
 
 def readfile(path):
@@ -88,10 +88,9 @@ def readfile(path):
 
 
 def main():
-    parser = get_parser()
-    train_file = "train.csv"
-    test_file = "test.csv"
-    embeddings = "word2vec_model"
+    train_file = "train_new.csv"
+    test_file = "test_new.csv"
+    embeddings = "word2vec_model_new"
     labels_train, msgs_train, cashtags_train = readfile(train_file)
     labels_test, msgs_test, cashtags_test = readfile(test_file)
     train_predict(labels_train, msgs_train, labels_test, msgs_test, cashtags_train, cashtags_test, embeddings)
