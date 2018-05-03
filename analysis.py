@@ -11,6 +11,9 @@ import operator
 from sklearn.svm import SVR
 from sklearn.neural_network import MLPRegressor
 from itertools import izip
+import warnings
+import sklearn.exceptions
+warnings.filterwarnings("ignore", category=sklearn.exceptions.UndefinedMetricWarning)
 
 class MeanEmbeddingVectorizer(object):
     def __init__(self, word2vec):
@@ -67,10 +70,27 @@ def  train_predict(labels_train, msgs_train, labels_test, msgs_test, cashtags_tr
     np.savetxt("predict.csv", y_hat, delimiter='\n')
     res_dict = {}
     mse = mean_squared_error(Y_test, y_hat)
-    #f1_ma = f1_score(Y_test, y_hat, average='macro')
-    #f1_mi = f1_score(Y_test, y_hat, average='micro')
+    Y_test_f1 = []
+    for i in range(len(Y_test)):
+        if Y_test[i] < 0.:
+            Y_test_f1.append('-1')
+        elif Y_test[i] == 0:
+            Y_test_f1.append('0')
+        else: 
+            Y_test_f1.append('1')
+    y_hat_f1 = []
+    for i in range(len(y_hat)):
+        if y_hat[i] < 0.:
+            y_hat_f1.append('-1')
+        elif y_hat[i] == 0:
+            y_hat_f1.append('0')
+        else:
+            y_hat_f1.append('1')
+    f1_ma = f1_score(Y_test_f1, y_hat_f1, average='macro')
+    f1_mi = f1_score(Y_test_f1, y_hat_f1, average='micro')
+    #print f1_ma
     print 'MSE: ', mse
-    #print 'f1 macro: ', f1_ma, '\tf1 micro: ', f1_mi
+    print 'f1 macro: ', f1_ma, '\tf1 micro: ', f1_mi
     return mse
 
 
@@ -88,9 +108,9 @@ def readfile(path):
 
 
 def main():
-    train_file = "train_new.csv"
-    test_file = "test_new.csv"
-    embeddings = "word2vec_model_new"
+    train_file = "train.csv"
+    test_file = "train.csv"
+    embeddings = "word2vec_model"
     labels_train, msgs_train, cashtags_train = readfile(train_file)
     labels_test, msgs_test, cashtags_test = readfile(test_file)
     train_predict(labels_train, msgs_train, labels_test, msgs_test, cashtags_train, cashtags_test, embeddings)
