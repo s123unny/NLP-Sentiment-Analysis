@@ -23,15 +23,23 @@ class MeanEmbeddingVectorizer(object):
 def train_predict(train_tweet, train_target, train_sentiment, test_tweet, test_target, test_sentiment, wordembedding, train_snippet, test_snippet):
 	Y_train = np.array([float(x) for x in train_sentiment])
 	Y_test = np.array([float(x) for x in test_sentiment])
+	X_train_bow = []
+	X_test_bow = []
 	X_train_boe = []
 	X_test_boe = []
 	X_train_bos = []
 	X_test_bos = []
 	X_train = []
 	X_test = []
-	print 'train: ', len(Y_train), 'test:', len(Y_test)
+	print 'train:', len(Y_train), 'test:', len(Y_test)
 
-        vec = CountVectorizer(ngram_range=(1,1))
+	'''vec = CountVectorizer(ngram_range=(1,1))
+	vec.fit(train_tweet)
+	X_train_bow = vec.transform(train_tweet).toarray()
+	X_test_bow = vec.transform(test_tweet).toarray()
+	print 'len x_Train_bow, X_test_bow', X_train_bow.shape , X_test_bow.shape'''
+
+	vec = CountVectorizer(ngram_range=(1,1))
 	vec.fit(train_tweet)
 	X_train_bos = vec.transform(train_snippet).toarray()
 	X_test_bos = vec.transform(test_snippet).toarray()
