@@ -5,6 +5,7 @@ import gensim
 from sklearn.ensemble import ExtraTreesRegressor
 from sklearn.feature_extraction.text import CountVectorizer
 import pickle
+import argparse
 
 class MeanEmbeddingVectorizer(object):
     def __init__(self, word2vec):
@@ -23,26 +24,35 @@ class MeanEmbeddingVectorizer(object):
             for words in X
         ])
 
-def train_predict(test_tweet, test_target, test_sentiment, test_snippet):
+def get_arg():
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('test', help='test file')
+    parser.add_argument('bos_feature', help='bos_feature')
+    parser.add_argument('boe_feature', help='boe_feature')
+    parser.add_argument('ETR_model', help='ETR_model')
+    args = parser.parse_args()
+    return args
+
+def train_predict(test_tweet, test_target, test_sentiment, test_snippet, args):
 	Y_test = np.array([float(x) for x in test_sentiment])
 	X_test_boe = []
 	X_test_bos = []
 	X_test = []
 	print 'test:', len(Y_test)
 
-	with open('bos_feature', 'rb') as f:
+	with open(args.bos_feature, 'rb') as f:
             vec = pickle.load(f)
 	X_test_bos = vec.transform(test_snippet).toarray()
 	print 'len X_test_bos' , X_test_bos.shape
 
-	with open('boe_feature', 'rb') as f:
+	with open(args.boe_feature, 'rb') as f:
             vec = pickle.load(f)
 	X_test_boe = vec.transform(test_tweet)
 	print "len X_test_boe", X_test_boe.shape
 	
 	X_test = np.concatenate((X_test_bos, X_test_boe), axis=1)
 
-	with open('ETR_model', 'rb') as f:
+	with open(args.ETR_model, 'rb') as f:
             clf = pickle.load(f)
         print "testing..."
 	Y_predict = clf.predict(X_test)
@@ -84,9 +94,10 @@ def readfile(path):
 	return tweet, target, sentiment, snippets
 
 def main():
-	testfile = "test.csv"
+	args = get_arg()
+	testfile = args.test
 	test_tweet, test_target, test_sentiment, test_snippet = readfile(testfile)
-	train_predict(test_tweet, test_target, test_sentiment, test_snippet)
+	train_predict(test_tweet, test_target, test_sentiment, test_snippet, args)
 
 if __name__ == "__main__":
 	main()

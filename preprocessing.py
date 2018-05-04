@@ -8,10 +8,20 @@ from gensim.models import Word2Vec
 from gensim.models.word2vec import LineSentence
 import re
 from nltk.corpus import stopwords
+import argparse
 
-data = json.loads(open('training_set.json').read())
+def get_arg():
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('--model', help='train w2v model')
+    parser.add_argument("load")
+    parser.add_argument("csv")
+    args = parser.parse_args()
+    return args
+
+args = get_arg()
+data = json.loads(open(args.load).read())
 sentences = []
-new_tweet = open("train.csv", "w")
+new_tweet = open(args.csv, "w")
 cashtag = ["$"+chr(asci) for asci in range(97, 123)]
 stop_words = set(stopwords.words('english'))
 for item in data:
@@ -48,10 +58,10 @@ for item in data:
     sentences.append(filtered_sentence)
     new_tweet.write(' '.join(filtered_sentence)+'\t'+item["target"]+'\t'+str(item["sentiment"])+'\t'+' '.join(filtered_snippet)+'\n')
 
-
-model = Word2Vec(sentences, size=10, min_count=1, workers=4)
-model.save("word2vec_model")
-model.wv.save_word2vec_format("vectors", binary=False)
+if args.model != None:
+    model = Word2Vec(sentences, size=10, min_count=1, workers=4)
+    model.save(args.model)
+    #model.wv.save_word2vec_format("vectors", binary=False)
 
 
 
